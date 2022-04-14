@@ -15,16 +15,20 @@ defmodule ItemsServiceWeb.ItemController do
         _params
       ) do
     items = Items.list_items(filters, sorting, pagination)
-    render(conn, "index.json", %{data: items, meta: "foo"})
+    render(conn, "index.json", %{data: items})
   end
 
-  def get_by_id_or_names_path(conn, %{"names_path" => [id_or_name]}) do
-    item = Items.get_by_id_or_name!(id_or_name)
-    render(conn, "show.json", item: item)
+  def get_by_id_or_names_path(conn, %{"id_or_names_path" => [id]}) do
+    case Items.get_by_id_or_name(id) do
+      nil -> {:error, :not_found}
+      item -> render(conn, "show.json", %{data: item})
+    end
   end
 
-  def get_by_id_or_names_path(conn, %{"names_path" => names_path}) do
-    item = Items.get_by_names_path(names_path)
-    render(conn, "show.json", item: item)
+  def get_by_id_or_names_path(conn, %{"id_or_names_path" => names_path}) do
+    case Items.get_by_names_path(names_path) do
+      nil -> {:error, :not_found}
+      item -> render(conn, "show.json", %{data: item})
+    end
   end
 end

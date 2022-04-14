@@ -9,6 +9,6 @@ defmodule ItemsServiceWeb.Router do
   scope "/api", ItemsServiceWeb do
     pipe_through :api
     get "/items", ItemController, :index
-    get "/items/*path_name", ItemController, :get_by_id_or_name_path
+    get "/items/*id_or_names_path", ItemController, :get_by_id_or_names_path
   end
 end

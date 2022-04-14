@@ -11,6 +11,8 @@ defmodule ItemsService.Items do
 
   @doc """
   Returns the list of items.
+
+  The listing can be filtered, sorted and the results are paginated.
   """
   def list_items(filters, sorting, pagination) do
     Item
@@ -21,25 +23,56 @@ defmodule ItemsService.Items do
   end
 
   @doc """
-  Gets an item from its path hierarchy.
+  Gets an item given it's path.
+
+  Given an item with name "a", and which parent's name is "b",
+  the path of the item is ["b", "a"].
   """
   def get_by_names_path(names) do
     Item
-    |> where(name: ^names)
+    |> where([i], i.name in ^names)
+    |> select([i], {i.name, i})
     |> preload(:parent)
-    |> select([i], %{i.name => i})
     |> Repo.all()
+    |> Map.new()
+    |> last_child_or_null(names)
   end
 
-  @doc """
-  Gets a single item.
-  """
-  def get_by_id_or_name!(id_or_name) do
-    Item
-    |> where([i], i.id == ^id_or_name)
-    |> or_where([i], i.name == ^id_or_name)
-    |> Repo.one!()
+  defp last_child_or_null(items, names) do
+    Enum.reduce(names, fn child_name, parent_name ->
+      child = Map.get(items, child_name)
+      parent = Map.get(items, parent_name)
+
+      parents_child_or_null(child, parent)
+    end)
   end
+
+  defp parents_child_or_null(child = %{parent_id: parent_id}, %{id: parent_id}), do: child
+  defp parents_child_or_null(_, _), do: nil
+
+  @doc """
+  Gets a single item by name or id.
+
+  Names aren't unique, so if there are multiple items with the same name,
+  the first one is returned.
+  """
+  def get_by_id_or_name(id_or_name) do
+    Item
+    |> filter_by_id(id_or_name)
+    |> or_filter_by_name(id_or_name)
+    |> limit(1)
+    |> preload(:parent)
+    |> Repo.one()
+  end
+
+  defp filter_by_id(query, id_or_name) do
+    case Integer.parse(id_or_name) do
+      :error -> query
+      {id, _} -> where(query, id: ^id)
+    end
+  end
+
+  defp or_filter_by_name(query, id_or_name), do: or_where(query, name: ^id_or_name)
 
   @doc """
   Creates a item.

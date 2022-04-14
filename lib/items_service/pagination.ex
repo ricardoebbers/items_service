@@ -8,6 +8,9 @@ defmodule ItemsService.Pagination do
   @default_page "1"
   @default_size "500"
 
+  @doc """
+  Paginates a query by page and size.
+  """
   def paginate(query, pagination) do
     page =
       pagination
