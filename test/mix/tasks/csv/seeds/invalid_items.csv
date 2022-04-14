@@ -1,0 +1,6 @@
+id,parent_id,item_name,priority
+1,nil,valid item,2
+0,nil,invalid id,4
+2,99,parent doesn't exist,5
+1,nil,id not unique,6
+,,,

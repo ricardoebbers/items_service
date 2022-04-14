@@ -46,6 +46,9 @@ defmodule ItemsService.MixProject do
       # Json:API server
       {:jsonapi, "~> 1.3.0"},
 
+      # CSV
+      {:csv, "~> 2.4.1"},
+
       # Code quality
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:ex_machina, "~> 2.7.0", only: :test}

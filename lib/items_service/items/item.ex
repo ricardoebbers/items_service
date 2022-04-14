@@ -17,7 +17,11 @@ defmodule ItemsService.Items.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:name, :priority, :parent_id])
+    |> cast(attrs, [:id, :name, :priority, :parent_id])
     |> validate_required([:name, :priority])
+    |> validate_number(:id, greater_than: 0)
+    |> validate_number(:priority, greater_than_or_equal_to: 0)
+    |> unique_constraint(:id, name: :items_pkey)
+    |> foreign_key_constraint(:parent_id)
   end
 end
