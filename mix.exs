@@ -33,6 +33,7 @@ defmodule ItemsService.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      # Phoenix deps
       {:phoenix, "~> 1.6.6"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
@@ -40,7 +41,14 @@ defmodule ItemsService.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+
+      # Json:API server
+      {:jsonapi, "~> 1.3.0"},
+
+      # Code quality
+      {:credo, "~> 1.6.4"},
+      {:ex_machina, "~> 2.7.0"}
     ]
   end
 
