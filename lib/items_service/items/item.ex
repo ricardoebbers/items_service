@@ -17,7 +17,7 @@ defmodule ItemsService.Items.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:name, :priority])
+    |> cast(attrs, [:name, :priority, :parent_id])
     |> validate_required([:name, :priority])
   end
 end

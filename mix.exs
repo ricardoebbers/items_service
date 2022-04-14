@@ -47,8 +47,8 @@ defmodule ItemsService.MixProject do
       {:jsonapi, "~> 1.3.0"},
 
       # Code quality
-      {:credo, "~> 1.6.4"},
-      {:ex_machina, "~> 2.7.0"}
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:ex_machina, "~> 2.7.0", only: :test}
     ]
   end
 

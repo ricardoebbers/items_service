@@ -7,47 +7,42 @@ defmodule ItemsService.Items do
   alias ItemsService.Repo
 
   alias ItemsService.Items.Item
+  alias ItemsService.Pagination
 
   @doc """
   Returns the list of items.
-
-  ## Examples
-
-      iex> list_items()
-      [%Item{}, ...]
-
   """
-  def list_items do
-    Repo.all(Item)
+  def list_items(filters, sorting, pagination) do
+    Item
+    |> where(^filters)
+    |> order_by(^sorting)
+    |> Pagination.paginate(pagination)
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets an item from its path hierarchy.
+  """
+  def get_by_names_path(names) do
+    Item
+    |> where(name: ^names)
+    |> preload(:parent)
+    |> select([i], %{i.name => i})
+    |> Repo.all()
   end
 
   @doc """
   Gets a single item.
-
-  Raises `Ecto.NoResultsError` if the Item does not exist.
-
-  ## Examples
-
-      iex> get_item!(123)
-      %Item{}
-
-      iex> get_item!(456)
-      ** (Ecto.NoResultsError)
-
   """
-  def get_item!(id), do: Repo.get!(Item, id)
+  def get_by_id_or_name!(id_or_name) do
+    Item
+    |> where([i], i.id == ^id_or_name)
+    |> or_where([i], i.name == ^id_or_name)
+    |> Repo.one!()
+  end
 
   @doc """
   Creates a item.
-
-  ## Examples
-
-      iex> create_item(%{field: value})
-      {:ok, %Item{}}
-
-      iex> create_item(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
   def create_item(attrs \\ %{}) do
     %Item{}
@@ -55,50 +50,12 @@ defmodule ItemsService.Items do
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a item.
+  def total_pages(0), do: 0
 
-  ## Examples
-
-      iex> update_item(item, %{field: new_value})
-      {:ok, %Item{}}
-
-      iex> update_item(item, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_item(%Item{} = item, attrs) do
-    item
-    |> Item.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a item.
-
-  ## Examples
-
-      iex> delete_item(item)
-      {:ok, %Item{}}
-
-      iex> delete_item(item)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_item(%Item{} = item) do
-    Repo.delete(item)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking item changes.
-
-  ## Examples
-
-      iex> change_item(item)
-      %Ecto.Changeset{data: %Item{}}
-
-  """
-  def change_item(%Item{} = item, attrs \\ %{}) do
-    Item.changeset(item, attrs)
+  def total_pages(page_size) do
+    Item
+    |> Repo.aggregate(:count)
+    |> Kernel./(page_size)
+    |> ceil()
   end
 end

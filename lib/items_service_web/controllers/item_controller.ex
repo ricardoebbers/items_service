@@ -2,42 +2,29 @@ defmodule ItemsServiceWeb.ItemController do
   use ItemsServiceWeb, :controller
 
   alias ItemsService.Items
-  alias ItemsService.Items.Item
 
   action_fallback ItemsServiceWeb.FallbackController
 
-  def index(conn, _params) do
-    items = Items.list_items()
-    render(conn, "index.json", items: items)
+  plug JSONAPI.QueryParser,
+    filter: ~w(name),
+    sort: ~w(priority),
+    view: PostView
+
+  def index(
+        conn = %{assigns: %{jsonapi_query: %{filter: filters, sort: sorting, page: pagination}}},
+        _params
+      ) do
+    items = Items.list_items(filters, sorting, pagination)
+    render(conn, "index.json", %{data: items, meta: "foo"})
   end
 
-  def create(conn, %{"item" => item_params}) do
-    with {:ok, %Item{} = item} <- Items.create_item(item_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", Routes.item_path(conn, :show, item))
-      |> render("show.json", item: item)
-    end
-  end
-
-  def show(conn, %{"id" => id}) do
-    item = Items.get_item!(id)
+  def get_by_id_or_names_path(conn, %{"names_path" => [id_or_name]}) do
+    item = Items.get_by_id_or_name!(id_or_name)
     render(conn, "show.json", item: item)
   end
 
-  def update(conn, %{"id" => id, "item" => item_params}) do
-    item = Items.get_item!(id)
-
-    with {:ok, %Item{} = item} <- Items.update_item(item, item_params) do
-      render(conn, "show.json", item: item)
-    end
-  end
-
-  def delete(conn, %{"id" => id}) do
-    item = Items.get_item!(id)
-
-    with {:ok, %Item{}} <- Items.delete_item(item) do
-      send_resp(conn, :no_content, "")
-    end
+  def get_by_id_or_names_path(conn, %{"names_path" => names_path}) do
+    item = Items.get_by_names_path(names_path)
+    render(conn, "show.json", item: item)
   end
 end

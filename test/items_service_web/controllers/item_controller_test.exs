@@ -1,88 +1,90 @@
 defmodule ItemsServiceWeb.ItemControllerTest do
   use ItemsServiceWeb.ConnCase
 
-  import ItemsService.ItemsFixtures
-
-  alias ItemsService.Items.Item
-
-  @create_attrs %{
-    name: "some name",
-    priority: 42
-  }
-  @update_attrs %{
-    name: "some updated name",
-    priority: 43
-  }
-  @invalid_attrs %{name: nil, priority: nil}
+  import ItemsFactory
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
   describe "index" do
-    test "lists all items", %{conn: conn} do
+    test "lists items", %{conn: conn} do
+      %{id: id, name: name, priority: priority} = insert(:item)
+
       conn = get(conn, Routes.item_path(conn, :index))
-      assert json_response(conn, 200)["data"] == []
-    end
-  end
 
-  describe "create item" do
-    test "renders item when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.item_path(conn, :create), item: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
-
-      conn = get(conn, Routes.item_path(conn, :show, id))
-
-      assert %{
-               "id" => ^id,
-               "name" => "some name",
-               "priority" => 42
-             } = json_response(conn, 200)["data"]
+      assert [
+               %{
+                 "attributes" => %{
+                   "id" => ^id,
+                   "name" => ^name,
+                   "parent_id" => nil,
+                   "priority" => ^priority
+                 }
+               }
+             ] = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.item_path(conn, :create), item: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
-    end
-  end
+    test "filter items", %{conn: conn} do
+      _item_1 = %{id: id, name: name, priority: priority} = insert(:item)
+      _item_2 = insert(:item)
 
-  describe "update item" do
-    setup [:create_item]
+      conn = get(conn, Routes.item_path(conn, :index), %{filter: %{name: name}})
 
-    test "renders item when data is valid", %{conn: conn, item: %Item{id: id} = item} do
-      conn = put(conn, Routes.item_path(conn, :update, item), item: @update_attrs)
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
-
-      conn = get(conn, Routes.item_path(conn, :show, id))
-
-      assert %{
-               "id" => ^id,
-               "name" => "some updated name",
-               "priority" => 43
-             } = json_response(conn, 200)["data"]
+      assert [
+               %{
+                 "attributes" => %{
+                   "id" => ^id,
+                   "name" => ^name,
+                   "parent_id" => nil,
+                   "priority" => ^priority
+                 }
+               }
+             ] = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, item: item} do
-      conn = put(conn, Routes.item_path(conn, :update, item), item: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
+    test "sort items", %{conn: conn} do
+      item_1 = %{id: item_1_id, name: item_1_name} = insert(:item, priority: 1)
+      _item_2 = %{id: item_2_id, name: item_2_name} = insert(:item, priority: 2, parent: item_1)
+
+      conn = get(conn, Routes.item_path(conn, :index), %{sort: "-priority"})
+
+      assert [
+               %{
+                 "attributes" => %{
+                   "id" => ^item_2_id,
+                   "name" => ^item_2_name,
+                   "parent_id" => ^item_1_id,
+                   "priority" => 2
+                 }
+               },
+               %{
+                 "attributes" => %{
+                   "id" => ^item_1_id,
+                   "name" => ^item_1_name,
+                   "parent_id" => nil,
+                   "priority" => 1
+                 }
+               }
+             ] = json_response(conn, 200)["data"]
     end
-  end
 
-  describe "delete item" do
-    setup [:create_item]
+    test "paginates items", %{conn: conn} do
+      item_1 = %{id: item_1_id, name: item_1_name} = insert(:item, priority: 1)
+      _item_2 = insert(:item, priority: 2, parent: item_1)
 
-    test "deletes chosen item", %{conn: conn, item: item} do
-      conn = delete(conn, Routes.item_path(conn, :delete, item))
-      assert response(conn, 204)
+      conn = get(conn, Routes.item_path(conn, :index), %{page: %{size: 1, page: 1}})
 
-      assert_error_sent 404, fn ->
-        get(conn, Routes.item_path(conn, :show, item))
-      end
+      assert [
+               %{
+                 "attributes" => %{
+                   "id" => ^item_1_id,
+                   "name" => ^item_1_name,
+                   "parent_id" => nil,
+                   "priority" => 1
+                 }
+               }
+             ] = json_response(conn, 200)["data"]
     end
-  end
-
-  defp create_item(_) do
-    item = item_fixture()
-    %{item: item}
   end
 end
