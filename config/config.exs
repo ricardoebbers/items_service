@@ -26,6 +26,8 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :jsonapi,
+  host: "localhost:4000",
+  scheme: "http",
   namespace: "/api",
   json_library: Jason,
   paginator: ItemsServiceWeb.PageBasedPaginator

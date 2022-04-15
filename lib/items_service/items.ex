@@ -4,10 +4,12 @@ defmodule ItemsService.Items do
   """
 
   import Ecto.Query, warn: false
-  alias ItemsService.Repo
 
+  alias ItemsService.Repo
   alias ItemsService.Items.Item
   alias ItemsService.Pagination
+
+  require Logger
 
   @doc """
   Returns the list of items.
@@ -15,6 +17,10 @@ defmodule ItemsService.Items do
   The listing can be filtered, sorted and the results are paginated.
   """
   def list_items(filters, sorting, pagination) do
+    Logger.debug(
+      "Listing items with filters: #{inspect(filters)}, sorting: #{inspect(sorting)}, pagination: #{inspect(pagination)}"
+    )
+
     Item
     |> where(^filters)
     |> order_by(^sorting)
@@ -29,25 +35,38 @@ defmodule ItemsService.Items do
   the path of the item is ["b", "a"].
   """
   def get_by_names_path(names) do
-    Item
-    |> where([i], i.name in ^names)
-    |> select([i], {i.name, i})
-    |> preload(:parent)
-    |> Repo.all()
-    |> Map.new()
-    |> last_child_or_null(names)
+    Logger.debug("Getting item by names path: #{inspect(names)}")
+
+    items =
+      Item
+      |> where([i], i.name in ^names)
+      |> select([i], {i.name, i})
+      |> preload(:parent)
+      |> Repo.all()
+      |> Map.new()
+
+    if valid_item_tree?(names, items) do
+      Map.get(items, List.last(names))
+    else
+      nil
+    end
   end
 
-  defp last_child_or_null(items, names) do
-    Enum.reduce(names, fn child_name, parent_name ->
+  defp valid_item_tree?(names, items) do
+    names
+    |> Enum.reduce(fn child_name, parent_name ->
+      Logger.debug("Checking if #{inspect(child_name)} is a child of #{inspect(parent_name)}")
+
       child = Map.get(items, child_name)
       parent = Map.get(items, parent_name)
 
       parents_child_or_null(child, parent)
     end)
+    |> Kernel.is_nil()
+    |> Kernel.not()
   end
 
-  defp parents_child_or_null(child = %{parent_id: parent_id}, %{id: parent_id}), do: child
+  defp parents_child_or_null(child = %{parent_id: parent_id}, %{id: parent_id}), do: child.name
   defp parents_child_or_null(_, _), do: nil
 
   @doc """
@@ -57,6 +76,8 @@ defmodule ItemsService.Items do
   the first one is returned.
   """
   def get_by_id_or_name(id_or_name) do
+    Logger.debug("Getting item by id or name: #{inspect(id_or_name)}")
+
     Item
     |> filter_by_id(id_or_name)
     |> or_filter_by_name(id_or_name)
@@ -78,6 +99,8 @@ defmodule ItemsService.Items do
   Creates a item.
   """
   def create_item(attrs \\ %{}) do
+    Logger.debug("Creating item with attrs: #{inspect(attrs)}")
+
     %Item{}
     |> Item.changeset(attrs)
     |> Repo.insert()
