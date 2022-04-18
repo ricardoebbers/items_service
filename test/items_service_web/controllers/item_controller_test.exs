@@ -86,6 +86,15 @@ defmodule ItemsServiceWeb.ItemControllerTest do
                }
              ] = json_response(conn, 200)["data"]
     end
+
+    test "should return empty list if page size is zero", %{conn: conn} do
+      item_1 = %{id: item_1_id, name: item_1_name} = insert(:item, priority: 1)
+      _item_2 = insert(:item, priority: 2, parent: item_1)
+
+      conn = get(conn, Routes.item_path(conn, :index), %{page: %{size: 0, page: 1}})
+
+      assert [] = json_response(conn, 200)["data"]
+    end
   end
 
   describe "get_by_id_or_names_path/2" do
