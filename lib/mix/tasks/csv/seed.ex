@@ -17,13 +17,10 @@ defmodule Mix.Tasks.Csv.Seed do
 
   require Logger
 
-  @shortdoc "Loads a csv in priv/repo and tries to create items with the data on it."
+  @shortdoc "Loads a csv and tries to create items with the data on it."
   @requirements ~w(ecto.drop ecto.create ecto.migrate app.config app.start)
   @columns ~w(id parent_id item_name priority)a
 
-  @doc """
-  test
-  """
   @impl true
   def run([csv_file_path]) do
     success_count =

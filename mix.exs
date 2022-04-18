@@ -10,7 +10,14 @@ defmodule ItemsService.MixProject do
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ]
     ]
   end
 
@@ -51,7 +58,8 @@ defmodule ItemsService.MixProject do
 
       # Code quality
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:ex_machina, "~> 2.7.0", only: :test}
+      {:ex_machina, "~> 2.7.0", only: :test},
+      {:excoveralls, "~> 0.10", only: :test}
     ]
   end
 

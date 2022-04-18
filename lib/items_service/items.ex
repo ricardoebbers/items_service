@@ -22,11 +22,17 @@ defmodule ItemsService.Items do
     )
 
     Item
-    |> where(^filters)
+    |> filter_like_name(filters)
     |> order_by(^sorting)
     |> Pagination.paginate(pagination)
     |> Repo.all()
   end
+
+  defp filter_like_name(query, name: name) do
+    where(query, [i], ilike(i.name, ^name))
+  end
+
+  defp filter_like_name(query, _), do: query
 
   @doc """
   Gets an item given it's path.

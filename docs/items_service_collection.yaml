@@ -1,0 +1,186 @@
+_type: export
+__export_format: 4
+__export_date: 2022-04-18T14:03:42.628Z
+__export_source: insomnia.desktop.app:v2022.2.1
+resources:
+  - _id: req_5d630f728dc44f27a9bda5b291574a2b
+    parentId: wrk_7fa7e59418d84b40bc4f6708f9d69e0a
+    modified: 1650024461137
+    created: 1650023762583
+    url: http://localhost:4000/api/items
+    name: List all items
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1650024098433
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: wrk_7fa7e59418d84b40bc4f6708f9d69e0a
+    parentId: null
+    modified: 1650023840504
+    created: 1650023696520
+    name: New Document
+    description: ""
+    scope: design
+    _type: workspace
+  - _id: req_d7fb363af8724a7f97ff2fffea41dd0d
+    parentId: wrk_7fa7e59418d84b40bc4f6708f9d69e0a
+    modified: 1650026558749
+    created: 1650024098383
+    url: http://localhost:4000/api/items?filter[name]=folder 1 1
+    name: List filtered by name
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1650024098383
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_36c69a2cd450455db25cb14367d6072f
+    parentId: wrk_7fa7e59418d84b40bc4f6708f9d69e0a
+    modified: 1650026541763
+    created: 1650024404355
+    url: http://localhost:4000/api/items?sort=-priority
+    name: List sorted by priority
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1650024062106
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_7e56af1c42c44db683009d73296d0a62
+    parentId: wrk_7fa7e59418d84b40bc4f6708f9d69e0a
+    modified: 1650026634046
+    created: 1650024025829
+    url: http://localhost:4000/api/items?page[page]=2&page[size]=1
+    name: List paginated
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1650024025829
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_ff1a9b58760449648551a67e24f39c4c
+    parentId: wrk_7fa7e59418d84b40bc4f6708f9d69e0a
+    modified: 1650024524113
+    created: 1650024478733
+    url: http://localhost:4000/api/items/heading 2/folder 2 3/subfolder 2 3 2
+    name: Item by path
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1650024025779
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_fbb1722625e7410d87b55b3ff79d73f9
+    parentId: wrk_7fa7e59418d84b40bc4f6708f9d69e0a
+    modified: 1650026598615
+    created: 1650026586067
+    url: http://localhost:4000/api/items/7
+    name: Item by id
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1650024025729
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_f65663a5c06947fd9bff44d8b4d4b758
+    parentId: wrk_7fa7e59418d84b40bc4f6708f9d69e0a
+    modified: 1650026773872
+    created: 1650026592478
+    url: http://localhost:4000/api/items/heading 1
+    name: Item by name
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1650024025679
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_03ed2f663f638a101f368fc8ea342f8c36fde05e
+    parentId: wrk_7fa7e59418d84b40bc4f6708f9d69e0a
+    modified: 1650023769476
+    created: 1650023696537
+    name: Base Environment
+    data: {}
+    dataPropertyOrder: {}
+    color: null
+    isPrivate: false
+    metaSortKey: 1650023696537
+    _type: environment
+  - _id: jar_03ed2f663f638a101f368fc8ea342f8c36fde05e
+    parentId: wrk_7fa7e59418d84b40bc4f6708f9d69e0a
+    modified: 1650023696542
+    created: 1650023696542
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
+  - _id: spc_b91fc5319458400f8aeab8303bb7e39f
+    parentId: wrk_7fa7e59418d84b40bc4f6708f9d69e0a
+    modified: 1650023825644
+    created: 1650023696531
+    fileName: ProDeal360 challenge
+    contents: ""
+    contentType: yaml
+    _type: api_spec
